@@ -7,15 +7,27 @@ const cityController = {
             await new City(req.body).save()
             res.status(201).json({
                 message: 'city created',
+                cityId: req.body.id,
                 success: true
             })
         } catch (error) {
             res.status(400).json({
-                message: "couldn't create city"
+                message: "couldn't create city",
+                success: false
             })
         }
     },
-    read: async(req, res) => {
+    readAll: async(req, res) => {
+        let cities
+        try {
+            cities = await City.find()
+            res.json(cities)
+        } catch (error) {
+            console.log(error)
+            res.status(500).json()
+        }
+    },
+    readOne: async(req, res) => {
         try {
             
         } catch (error) {
