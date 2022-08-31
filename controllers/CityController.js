@@ -4,10 +4,10 @@ const cityController = {
   create: async (req, res) => {
     //const {city,country,photo,population,foundation} = req.body
     try {
-      await new City(req.body).save()
+      let city = await new City(req.body).save()
       res.status(201).json({
         message: 'city created',
-        cityId: req.body.id,
+        cityId: city._id,
         success: true
       })
     } catch (error) {
@@ -30,7 +30,7 @@ const cityController = {
   readOne: async (req, res) => {
     const { id } = req.params
     try {
-      let city = City.findOne({ _id: id })
+      let city = await City.findOne({ _id: id })
       if (city) {
         res.status(200).json({
           message: "city found",
@@ -44,8 +44,9 @@ const cityController = {
         })
       }
     } catch (error) {
+      console.log(error)
       res.status(400).json({
-        message: "",
+        message: "error",
         success: false
       })
     }
