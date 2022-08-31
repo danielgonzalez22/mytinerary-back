@@ -4,6 +4,6 @@ const {create, readAll, readOne} = require('../controllers/CityController')
 
 router.post('/', create)
 router.get('/', readAll)
-router.get('/', readOne)
+router.get('/:id', readOne)
 
 module.exports = router
