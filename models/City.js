@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const schema = new mongoose.Schema({
-    //todas las propiedades necesarias//
     city:{type: String, required: true},
     country:{type: String, required: true},
     photo:{type: String, required: true},
@@ -8,8 +7,6 @@ const schema = new mongoose.Schema({
     foundation:{type: Date, required: true}
    })
  const City = mongoose.model(
-     //primer parámetro: nombre de la colección
-     //segundo parámetro: esquema de datos
   'cities',
    schema
  )
