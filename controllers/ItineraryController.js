@@ -7,13 +7,13 @@ const itineraryController = {
             res.status("201").json({
                 message: "New itinerary added successfully.",
                 response: itinerary._id,
-                succes: true,
+                success: true,
             })
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "Could not add itinerary.",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -34,19 +34,19 @@ const itineraryController = {
                 res.status("200").json({
                     message: "The following itineraries were found.",
                     response: itineraries,
-                    succes: true,
+                    success: true,
             })
             } else {
                 res.status("404").json({
                     message: "No itineraries found.",
-                    succes: false,
+                    success: false,
                 })
             }
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "Unaggregated itinerary.",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -59,19 +59,19 @@ const itineraryController = {
                 res.status("200").json({
                     message: "You have updated an itinerary.",
                     response: itinerary,
-                    succes: true,
+                    success: true,
                 })
             } else {
                 res.status("404").json({
                     message: "Could not find the itinerary.",
-                    succes: false,
+                    success: false,
                 })
             }
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "Your itinerary could not be found.",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -81,13 +81,13 @@ const itineraryController = {
             await Itinerary.findOneAndRemove({ _id: id })
             res.status("200").json({
                 message: "You deleted a itinerary.",
-                succes: true,
+                success: true,
             })
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "Error",
-                succes: false,
+                success: false,
             })
         }
     }
