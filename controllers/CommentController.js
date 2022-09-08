@@ -10,7 +10,7 @@ const commentController = {
         } = req.body
 
         try {
-            await new Comment({ user, comment, itinerary, })
+            await new Comment({ user, comment, itinerary, }).save()
 
             res.status(201).json({
                 message: 'Comment created',
@@ -27,7 +27,7 @@ const commentController = {
     read: async (req, res) => {
         const { id } = req.params
         try {
-            let CommentOne = await Comment.findOne({ _id: id },)
+            let CommentOne = await Comment.findOne({ _id: id })
 
             if (CommentOne) {
 
