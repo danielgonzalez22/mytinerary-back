@@ -7,7 +7,7 @@ const cityController = {
       let city = await new City(req.body).save()
       res.status(201).json({
         message: 'city created',
-        createdCityId: city._id,
+        response: city._id,
         success: true
       })
     } catch (error) {
