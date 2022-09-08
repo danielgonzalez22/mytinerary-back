@@ -41,6 +41,35 @@ const userController ={
             })
         }
     },
+    getAllUsers: async (req, res) => {
+        let users 
+        let query = {}
+        if (req.query.user){
+            query.user=req.query.user
+        }
+        try {
+            users = await User.find(query)
+            if (users) {
+                res.status("200").json({
+                    message: "found user",
+                    response: users,
+                    success: true,
+                })
+            } else {
+                res.status("404").json({
+                    message: "user not found",
+                    success: false,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                succes: false,
+            })
+        }
+    },
+
 
 }
 
