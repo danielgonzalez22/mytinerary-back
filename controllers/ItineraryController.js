@@ -17,6 +17,30 @@ const itineraryController = {
             })
         }
     },
+    getItinerary: async (req, res) => {
+        const { id } = req.params
+        try {
+            let itinerary = await Itinerary.findOne({ _id: id })
+            if (itinerary) {
+                res.status("200").json({
+                    message: "Found itinerary",
+                    response: itinerary,
+                    succes: true,
+                })
+            } else {
+                res.status("404").json({
+                    message: "Coud not be found",
+                    succes: false,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                succes: false,
+            })
+        }
+    },
     getItineraries: async (req, res) => {
         let itineraries
         let query = {}
