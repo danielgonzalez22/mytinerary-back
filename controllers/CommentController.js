@@ -21,30 +21,63 @@ const commentController = {
       })
     }
   },
-  read: async (req, res) => {
-    const { id } = req.params
+  // read: async (req, res) => {
+  //   const { id } = req.params
+  //   try {
+  //     let CommentOne = await Comment.findOne({ _id: id })
+  //     if (CommentOne) {
+  //       res.status(200).json({
+  //         message: 'comment found',
+  //         response: CommentOne,
+  //         success: true
+  //       })
+  //     } else {
+  //       res.status(404).json({
+  //         message: "comment not found",
+  //         success: false
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.log(error)
+  //     res.status(400).json({
+  //       message: "error while trying to get a comment",
+  //       success: false
+  //     })
+  //   }
+  // },
+  getComments: async (req, res) => {
+    let itineraries
+    let query = {}
+    if (req.query.itinerary) {
+      query.itinerary = req.query.itinerary
+    }
+    if (req.query.user) {
+      query.user = req.query.user
+    }
     try {
-      let CommentOne = await Comment.findOne({ _id: id })
-      if (CommentOne) {
-        res.status(200).json({
-          message: 'comment found',
-          response: CommentOne,
-          success: true
+      comments = await Comment.find(query)
+        .populate("user", { user: 1 })
+        .populate("itinerary", { itinerary: 1 })
+      if (comments) {
+        res.status("200").json({
+          message: "the following comments were found",
+          response: comments,
+          success: true,
         })
       } else {
-        res.status(404).json({
-          message: "comment not found",
-          success: false
+        res.status("404").json({
+          message: "no comments found",
+          success: false,
         })
       }
     } catch (error) {
       console.log(error)
-      res.status(400).json({
-        message: "error while trying to get a comment",
-        success: false
+      res.status("400").json({
+        message: "error while trying to get all comments",
+        success: false,
       })
     }
-  },
+  }
 }
 
 module.exports = commentController
