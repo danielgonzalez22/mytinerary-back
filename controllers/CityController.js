@@ -6,13 +6,13 @@ const cityController = {
     try {
       let city = await new City(req.body).save()
       res.status(201).json({
-        message: 'city created',
+        message: 'city created successfully',
         response: city._id,
         success: true
       })
     } catch (error) {
       res.status(400).json({
-        message: "couldn't create city",
+        message: "error while trying to create a city",
         success: false
       })
     }
@@ -30,19 +30,22 @@ const cityController = {
       cities = await City.find(query)
       if (cities) {
         res.status("200").json({
-            message: "The following cities were found.",
+            message: "the following cities were found",
             response: cities,
             success: true,
     })
     } else {
         res.status("404").json({
-            message: "No cities were found.",
+            message: "no cities found.",
             success: false,
         })
     }
     } catch (error) {
       console.log(error)
-      res.status(500).json()
+      res.status(500).json({
+        message: "error while trying to read all cities",
+        success: false
+      })
     }
   },
   readOne: async (req, res) => {
@@ -57,14 +60,14 @@ const cityController = {
         })
       } else {
         res.status(404).json({
-          message: "couldn't find city",
+          message: "city not found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error",
+        message: "error while trying to find a city",
         success: false
       })
     }
@@ -77,17 +80,19 @@ const cityController = {
       updatedCity = await City.findOneAndUpdate({ _id: id }, city, { new: true })
       if (updatedCity) {
         res.status(200).json({
+          message: "city updated successfully",
+          success: true
         })
       } else {
         res.status(404).json({
-          message: "couldn't find city",
+          message: "couldn't update, no such city were found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error",
+        message: "error while trying to update a city",
         success: false
       })
     }
@@ -103,14 +108,14 @@ const cityController = {
         })
       } else {
         res.status(404).json({
-          message: "couldn't find city",
+          message: "couldn't delete, no such city were found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error",
+        message: "error while trying to delete a city",
         success: false
       })
     }
