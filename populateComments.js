@@ -3,9 +3,9 @@ const db = require('./config/database') //import database connection
 const Comment = require('./models/Comment') //import needed models
 const items = [
     {
-    comment:"Incredible!!",
-    user:"Mauro",
-    itinerary:"631928bc6b7204400a6088d0",
+    comment:"basta",
+    user:"631e87bcfb84efd499a43128",
+    itinerary:"631e860573b7d0c375e86721",
 }
 ];
 items.forEach(e => {
