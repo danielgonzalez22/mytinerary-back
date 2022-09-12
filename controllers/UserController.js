@@ -12,7 +12,7 @@ const userController ={
         } catch (error) {
             console.log(error)
             res.status("400").json({
-                message: "could not create user",
+                message: "couldn't create user",
                 success: false,
             })
         }
@@ -23,7 +23,7 @@ const userController ={
             let user = await User.findOne({ _id: id })
             if (user) {
                 res.status("200").json({
-                    message: "found user",
+                    message: "user found",
                     response: user,
                     success: true,
                 })
@@ -51,13 +51,13 @@ const userController ={
             users = await User.find(query)
             if (users) {
                 res.status("200").json({
-                    message: "found user",
+                    message: "users found",
                     response: users,
                     success: true,
                 })
             } else {
                 res.status("404").json({
-                    message: "user not found",
+                    message: "no users found",
                     success: false,
                 })
             }

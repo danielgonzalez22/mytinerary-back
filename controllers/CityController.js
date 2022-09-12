@@ -28,7 +28,18 @@ const cityController = {
     }
     try {
       cities = await City.find(query)
-      res.json(cities)
+      if (cities) {
+        res.status("200").json({
+            message: "The following cities were found.",
+            response: cities,
+            success: true,
+    })
+    } else {
+        res.status("404").json({
+            message: "No cities were found.",
+            success: false,
+        })
+    }
     } catch (error) {
       console.log(error)
       res.status(500).json()
