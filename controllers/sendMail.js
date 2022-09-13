@@ -38,7 +38,7 @@ const sendMail = async(mail,code) => {
         html:`
             <div>
            hola ${mail}
-
+            <a href='http://localhost:4000
             </div>
 
         `
