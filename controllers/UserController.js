@@ -5,30 +5,33 @@ const bcryptjs = require('bcryptjs');
 
 const userController ={
     signUp: async (req, res) => {
+        console.log(req.body)
             let {
                 name,
                 lastName,
                 photo,  
                 country,
-                email,
+                mail,
                 password,
                 role, // el rol debe venir desde el front para usar este metodo en ambos casos (user y admin)
                 from // el from debe venir desde el frotn para avisar al metodo desde donde se crea el usuario ej: google,facebook,etc
             }= req.body
         try{
-            let user = await User.findOne({email})
+         let user = await User.findOne({mail})
+         console.log(user)
                 if (!user){
                     let loggedIn = false;
                     let verified = false;
                     let code =  crypto
                     .randomBytes(15) // le aplico el metodo para avisar que debe tener 15 digitos 
                     .toString('hex') // le aplico el metodo para avisar que debe ser hexagecimal
+                   console.log(code)
                     if(from === 'form'){ //from form, si la data viene de del formulario de registro    
                         password = bcryptjs.hashSync(password,10);
-                        user = await new User({ name, lastName, photo, country, email, password: [password], role, 
+                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, 
                             //aaca hace falta enviar mail de verificacion   
                             from: [from], loggedIn, verified, code }).save()
-                        sendMail(email,code)
+                        sendMail(mail,code)
                         res.status(201).json({
                             message: "User signed.",
                             success: true,  
@@ -36,7 +39,7 @@ const userController ={
                     } else{ // si la data viene desde cualquier red social voy a hacer otra cosa
                         password = bcryptjs.hashSync(password,10); // este metodo requiere 2 parametros, primero la contraseña que debe hashear y segundo parametro, el nivel de seguridad que requiere el hasheo (10)
                         verified = true,
-                        user = await new User({ name, lastName, photo, country, email, password: [password], role, 
+                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, 
                         //aca no hace falta mail de verificacion    
                             from: [from], loggedIn, verified, code }).save()
                         res.status(201).json({
@@ -94,9 +97,9 @@ const userController ={
         }
     },
     signIn: async (req,res) =>{
-            const {email, password, from} = req.body
+            const {mail, password, from} = req.body
         try{
-            const user= await User.findOne({email})
+            const user= await User.findOne({mail})
                 if (!user){
                 res.status(404).json({
                     success:false,
@@ -109,7 +112,7 @@ const userController ={
                             const loginUser= {
                                 id:user._id,
                                 name: user.name,
-                                email: user.email,
+                                mail: user.mail,
                                 role: user.role,
                                 from: user.from,
                                 photo:user.photo
@@ -134,7 +137,7 @@ const userController ={
                         const loginUser= {
                             id:user._id,
                             name: user.name,
-                            email: user.email,
+                            mail: user.mail,
                             role: user.role,
                             from: user.from,
                             photo:user.photo
