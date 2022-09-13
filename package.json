@@ -21,6 +21,7 @@
     "joi": "^17.6.0",
     "mongoose": "^6.5.4",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.7.8",
     "react-redux": "^8.0.2",
     "redux": "^4.2.0"
   },
