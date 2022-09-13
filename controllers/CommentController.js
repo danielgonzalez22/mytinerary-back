@@ -46,7 +46,6 @@ const commentController = {
   //   }
   // },
   getComments: async (req, res) => {
-    let itineraries
     let query = {}
     if (req.query.itinerary) {
       query.itinerary = req.query.itinerary
