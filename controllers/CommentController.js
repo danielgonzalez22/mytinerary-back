@@ -46,7 +46,6 @@ const commentController = {
   //   }
   // },
   getComments: async (req, res) => {
-    let itineraries
     let query = {}
     if (req.query.itinerary) {
       query.itinerary = req.query.itinerary
@@ -56,8 +55,8 @@ const commentController = {
     }
     try {
       comments = await Comment.find(query)
-        .populate("user", { user: 1 })
-        .populate("itinerary", { itinerary: 1 })
+        .populate("user", { name: 1, lastName: 1, photo: 1 })
+        .populate("itinerary", { _id: 1 })
       if (comments) {
         res.status("200").json({
           message: "the following comments were found",
