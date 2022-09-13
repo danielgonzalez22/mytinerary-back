@@ -3,18 +3,18 @@ const db = require('./config/database') //import database connection
 const Itinerary = require('./models/Itinerary') //import needed models
 const items = [
     {
-        name: "Zafari for the jungle",
+        name: "Safari through the jungle",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f0",
+        city: "631e917c05a06d06af6f9033",
         price: "100",
         likes: "10",
         tags: "#animals #funny",
         duration: "4"
     },
     {
-        name: "Airplane",
+        name: "Airplane tour",
         user: "6318f2cf86ea60a969d24e48",
-        city: "631e852ccc9e4d60318d56f0",
+        city: "631e917c05a06d06af6f903a",
         price: "150",
         likes: "24",
         tags: "#fly #adrenalin",
@@ -23,7 +23,7 @@ const items = [
     {
         name: "Swim with sharks",
         user: "6318f2cf86ea60a969d24e48",
-        city: "631e852ccc9e4d60318d56f0",
+        city: "631e917c05a06d06af6f9039",
         price: "50",
         likes: "4",
         tags: "#risky #exciting",
@@ -32,7 +32,7 @@ const items = [
     {
         name: "Visit the top of the Burj Khalifa",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f1",
+        city: "631e917c05a06d06af6f9034",
         price: "300",
         likes: "34",
         tags: "#luxury",
@@ -41,7 +41,7 @@ const items = [
     {
         name: "Sheikhs Party ",
         user: "6318f2cf86ea60a969d24e49",
-        city: "631e852ccc9e4d60318d56f1",
+        city: "631e917c05a06d06af6f9034",
         price: "50",
         likes: "120",
         tags: "#party #night",
@@ -50,7 +50,7 @@ const items = [
     {
         name: "Know an oil well",
         user: "6318f2cf86ea60a969d24e48",
-        city: "631e852ccc9e4d60318d56f1",
+        city: "631e917c05a06d06af6f9034",
         price: "20",
         likes: "2",
         tags: "#curious #dubai",
@@ -59,7 +59,7 @@ const items = [
     {
         name: "Watch a soccer game",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f2",
+        city: "631e917c05a06d06af6f9039",
         price: "50",
         likes: "54",
         tags: "#soccer #galatasaray",
@@ -68,7 +68,7 @@ const items = [
     {
         name: "Meet a film set",
         user: "6318f2cf86ea60a969d24e49",
-        city: "631e852ccc9e4d60318d56f2",
+        city: "631e917c05a06d06af6f903b",
         price: "10",
         likes: "5",
         tags: "#film #novels",
@@ -77,16 +77,16 @@ const items = [
     {
         name: "Tour around the city",
         user: "6318f2cf86ea60a969d24e49",
-        city: "631e852ccc9e4d60318d56f2",
+        city: "631e917c05a06d06af6f903e",
         price: "20",
         likes: "45",
         tags: "#tour #freshair",
         duration: "3"
     },
     {
-        name: "Tour of the pyramids",
+        name: "Tour by the pyramids",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f3",
+        city: "631e917c05a06d06af6f9036",
         price: "80",
         likes: "36",
         tags: "#history #egypt",
@@ -104,7 +104,7 @@ const items = [
     {
         name: "Outdoor Museum",
         user: "6318f2cf86ea60a969d24e49",
-        city: "631e852ccc9e4d60318d56f4",
+        city: "631e917c05a06d06af6f9038",
         price: "50",
         likes: "19",
         tags: "#museum #finland",
@@ -122,7 +122,7 @@ const items = [
     {
         name: "Visit the mountains",
         user: "6318f2cf86ea60a969d24e48",
-        city: "631e852ccc9e4d60318d56f5",
+        city: "631e917c05a06d06af6f9037",
         price: "60",
         likes: "98",
         tags: "#cold #funny",
@@ -131,7 +131,7 @@ const items = [
     {
         name: "Meet the golden pavilion",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f5",
+        city: "631e917c05a06d06af6f9038",
         price: "100",
         likes: "54",
         tags: "#culture #japon",
@@ -140,7 +140,7 @@ const items = [
     {
         name: "Day of the Dead",
         user: "6318f2cf86ea60a969d24e47",
-        city: "631e852ccc9e4d60318d56f6",
+        city: "631e917c05a06d06af6f9039",
         price: "30",
         likes: "34",
         tags: "#festival #mexico",
@@ -149,7 +149,7 @@ const items = [
     {
         name: "Porto Seguro Carnival",
         user: "6318f2cf86ea60a969d24e48",
-        city: "631e852ccc9e4d60318d56f7",
+        city: "631e917c05a06d06af6f903a",
         price: "35",
         likes: "66",
         tags: "#brazil #carnival",
@@ -158,7 +158,7 @@ const items = [
     {
         name: "Attend a concert at the Sydney opera house",
         user: "6318f2cf86ea60a969d24e49",
-        city: "631e852ccc9e4d60318d56f9",
+        city: "631e917c05a06d06af6f903c",
         price: "80",
         likes: "56",
         tags: "#opera #music",
