@@ -130,14 +130,14 @@ const userController ={
                                 response: {user: loginUser},
                                 message: "Welcome " + user.name
                             })
-                        }else{ // if password does not match
+                        }else{ 
                             res.status(400).json({
                                 success:false,
                                 message: "Wrong username or password."
                             })
                         }
-                }else{ // If user tries to log by socialmedia
-                    if(checkPass.length > 0){// if password matches
+                }else{ 
+                    if(checkPass.length > 0){
                         const loginUser= {
                             id:user._id,
                             name: user.name,
@@ -155,14 +155,14 @@ const userController ={
                             response: {user: loginUser},
                             message: "Welcome " + user.name
                         })
-                    }else{ // if password does not match
+                    }else{ 
                         res.status(400).json({
                             success:false,
                             message: "Invalid credentials."
                             })
                         }
                     }
-            }else{ // If user exists but is not verified
+            }else{ 
                 res.status(401).json({
                     success:false,
                     message: "Please, verify your email account and try again."
@@ -176,6 +176,32 @@ const userController ={
             })
         }
     },
+    signOut: async(req,res) => {
+        const {mail} = req.body
+        try{
+            let user = await User.findOne({mail:mail})
+                    if (user){
+                        user.loggedIn = false
+                        await user.save()
+                                res.status(200).json({
+                                    message: 'Your session has been closed successfully',
+                                    success: true,
+                                    response: user.loggedIn
+                            })
+                    } else {
+                        res.status(404).json({
+                            message: 'User not found.',
+                            success: false
+                        })
+                    }
+            } catch (error) {
+                console.log(error);
+                    res.status(400).json({
+                        message: 'Failed to sign out.',
+                        success:false
+                    })
+                }
+        },
     getUser: async (req, res) => {
         const { id } = req.params
         try {
@@ -217,7 +243,7 @@ const userController ={
             })
             } else {
                 res.status("404").json({
-                    message: "No users could be found...",
+                    message: "No users could be found.",
                     success: false,
                 })
             }
