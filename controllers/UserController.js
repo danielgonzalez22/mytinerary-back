@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const crypto = require('crypto')
 const bcryptjs = require('bcryptjs');
-// const sendMail = require('./sendMail')
+const sendMail = require('./sendMail')
 
 const userController ={
     signUp: async (req, res) => {
@@ -73,14 +73,18 @@ const userController ={
                 })
         }
     },
-    verifyMail: async (req, res) => {
-        const {code} = req.params
+    // el codigo generado por el metodo de signup se envia a este otro metodo a traves de params para poder verificar la cuenta
+    // luego de crearlo lo comparo con los demas perfiles ya creados 
+    // si encuentra el usuario cambiara el verified de false a true
+    // si no lo encuentra (caso raro) avisara que el mail a verificar no tiene cuenta    
+    verifyMail: async (req, res) => { 
+    const {code} = req.params
         try {
             let user = await User.findOne({ code })
             if (user) {
-                user.verified = true
-                await user.save()
-                res.status("200").redirect(301, 'http://localhost:4000/signin')
+                user.verified = true // aqui se cambia la propiedad 
+                await user.save() // y acaa se guarda en la database
+                res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
 
             } else {
                 res.status("404").json({
