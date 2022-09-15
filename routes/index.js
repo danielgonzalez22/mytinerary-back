@@ -5,11 +5,11 @@ const cityRouter = require('./cities')
 const authRouter = require('./auth')
 const itineraryRouter = require('./itinerary')
 const commentsRouter = require('./comments')
+const activityRouter = require('./activities')
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.json();
 });
-
 router.use('/cities', cityRouter)
 router.use('/auth', authRouter)
 router.use('/itinerary', itineraryRouter)

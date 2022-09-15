@@ -1,9 +1,10 @@
 require('dotenv').config()
 const db = require('./config/database') //import database connection
-const Activities = require('./models/Activity') //import needed models
+const Activity = require('./models/Activity') //import needed models
 const items = [
 
     {
+<<<<<<< HEAD
     name: "Meet the king of savannah",
     photo: "https://cdn.pixabay.com/photo/2018/03/30/22/09/lion-3276692_1280.jpg",
     itinerary: "Zafari for the jungle",
@@ -144,3 +145,17 @@ const items = [
     itinerary:"",
 },
 ]
+=======
+    name: "do something in sheiks party",
+    photo: "https://pbs.twimg.com/media/DWQ5-OjWkAAtzYI.jpg:large",
+    itinerary: "631f8ed7ce170ef8e60bda46",
+}
+]
+items.forEach(e => {
+    Activity.create({
+        name:e.name,
+        photo:e.photo,
+        itinerary:e.itinerary,
+    })
+})
+>>>>>>> b0b2ffbaad99040841e38bb50511baf9b9d7920a

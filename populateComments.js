@@ -5,7 +5,7 @@ const items = [
     {
     comment:"basta",
     user:"631e87bcfb84efd499a43128",
-    itinerary:"631e860573b7d0c375e86721",
+    itinerary:"631f8ed7ce170ef8e60bda46",
 }
 ];
 items.forEach(e => {

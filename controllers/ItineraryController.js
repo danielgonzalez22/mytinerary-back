@@ -52,8 +52,8 @@ const itineraryController = {
     }
     try {
       itineraries = await Itinerary.find(query)
-        .populate("user", { name: 1 })
-        .populate("city", { city: 1 })
+        .populate("user", { name: 1, lastName: 1, country: 1, photo: 1 })
+        .populate("city", { city: 1, country: 1 })
       if (itineraries) {
         res.status("200").json({
           message: "the following itineraries were found",
