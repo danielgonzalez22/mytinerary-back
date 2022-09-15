@@ -1,17 +1,146 @@
 require('dotenv').config()
 const db = require('./config/database') //import database connection
-const Activity = require('./models/Activity') //import needed models
+const Activities = require('./models/Activity') //import needed models
 const items = [
-    {
-    name: "do something in sheiks party",
-    photo: "https://pbs.twimg.com/media/DWQ5-OjWkAAtzYI.jpg:large",
-    itinerary: "631f8ed7ce170ef8e60bda46",
-}
+    // cape town
+    {// zafari
+    name: "Meet the king of savannah",
+    photo: "https://cdn.pixabay.com/photo/2018/03/30/22/09/lion-3276692_1280.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e0",
+},
+{
+    name: "Feed a girafe",
+    photo: "https://thumbs.dreamstime.com/b/la-jirafa-en-el-parque-zool%C3%B3gico-cay%C3%B3-abajo-para-alimentar-al-ser-humano-103540185.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e0",
+},
+{
+    name: "See a hippo in action",
+    photo: "https://okdiario.com/img/2017/08/06/hipopotamos3-e1502011572366.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e0",
+},
+{// airplane tour
+    name: "Fly over Cape Town stadium",
+    photo:"https://st.focusedcollection.com/13422768/i/650/focused_160228044-stock-photo-view-cape-town-stadium-cape.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e1",
+},
+{
+    name: "see Table Mountain from the sky",
+    photo:"https://www.viajeroscallejeros.com/wp-content/uploads/2018/11/ciudad-del-cabo-1.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e1",
+},
+{
+    name: "Visit Robben Island Prison",
+    photo:"https://media.istockphoto.com/photos/aerial-view-of-mandelas-robben-island-prison-picture-id471596567",
+    itinerary: "63213f6f0c3bf93e0a76e8e1",
+},
+{// swim with sharks
+    name: "Feed a shark",
+    photo:"https://media.gq.com.mx/photos/5be9cd965c1fcb79714c2b4e/master/w_1600%2Cc_limit/alimentar_a_un_tiburon_no_es_buena_idea_7329.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e2",
+},
+{
+    name: "Face to face with a shark",
+    photo:"https://topbuceo.net/wp-content/uploads/2019/10/buceo-isla-guadalupe-tiburon-blanco.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e2",
+},
+{
+    name: "See a shark attacking its prey",
+    photo:"https://thumbs.dreamstime.com/b/atacando-los-grandes-tiburones-blancos-gran-tibur%C3%B3n-blanco-con-boca-abierta-en-el-agua-del-oc%C3%A9ano-nombre-cient%C3%ADfico-168944053.jpg",
+    itinerary: "63213f6f0c3bf93e0a76e8e2",
+},
+    {// visit the top of burj khalifa
+    name:"Dinner at the top of burj khalifa",
+    photo:"https://media.tacdn.com/media/attractions-splice-spp-674x446/06/6f/5f/a1.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e3",
+},
+{
+    name:"Tour for the tower",
+    photo:"https://www.ngenespanol.com/wp-content/uploads/2018/08/Burj-Khalifa.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e3",
+},
+{
+    name:"Parachute jump",
+    photo:"https://i.ytimg.com/vi/eLuCAfOmjAQ/maxresdefault.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e3",
+},
+{// sheiks party
+    name:"Sheiks Party",
+    photo:"https://e00-marca.uecdn.es/imagenes/2011/10/31/futbol/futbol_internacional/america/1320085550_extras_noticia_foton_7_0.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e4",
+},
+{
+    name:"Party in the desert",
+    photo:"https://cdn.getyourguide.com/img/tour/612364321feeb.jpeg/146.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e4",
+},
+{
+    name:"Pool Party",
+    photo:"https://www.tusdj.com/wp-content/uploads/2016/01/Cover-24-de-fiesta-en-Dubai-730x382.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e4",
+},
+{//know an oil well
+    name:"Oil weel tour",
+    photo:"https://www.arquimaster.com.ar/web/wp-content/uploads/2014/05/ciudades_petroleras2.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e5",
+},
+{
+    name:"Informative talk",
+    photo:"https://www.worldenergytrade.com/images/stories/news/oilgas/yacimientos/5050/Los-mayores-descubrimientos-de-petroleo-y-gas-del-2019.5050.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e5",
+},
+{
+    name:"Oil handling course",
+    photo:"http://estaticos.elmundo.es/assets/multimedia/imagenes/2016/11/14/14791304163123.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e5",
+},
+{// watch a soccer game
+    name:"Know the playing field",
+    photo:"https://cdn2.teknomers.com/es/wp-content/uploads/2022/03/1647255863_NOTICIAS-GALATASARAY-El-Estadio-Nef-esta-listo-para-el-derbi.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e6",
+},
+{
+    name:"Watch the Istambul derby",
+    photo:"https://apuntesderabona.com/wp-content/uploads/2017/10/Cr198uQWEAAwtJl.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e6",
+},
+{
+    name:"Club museum tour",
+    photo:"https://i0.wp.com/www.weloveist.com/wp-content/uploads/galatasaray-museum-beyoglu.jpg?fit=1200%2C750&ssl=1",
+    itinerary:"63213f6f0c3bf93e0a76e8e6",
+},
+{// meet a film set
+    name:"Visit the best recording set",
+    photo:"https://image.jimcdn.com/app/cms/image/transf/dimension=623x10000:format=jpg/path/s1749c66fc591852b/image/i81d2be66a6b20b4b/version/1430799392/image.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e7",
+},
+{
+    name:"Meet your favorite actors",
+    photo:"https://www.clarin.com/img/2019/02/19/pareja-real-y-de-ficcion___ENkU1Syln_1256x620__1.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8e7",
+},
+{
+    name:"Acting Workshop",
+    photo:"http://www.caynet.com.ar/noticias/editor/UserFiles/Image/Noticias2017/teatro-inicial.JPG",
+    itinerary:"63213f6f0c3bf93e0a76e8e7",
+},
+{//tour of the city
+    name:"Visit the largest shopping in Europe.",
+    photo:"https://dondeviajar.republica.com/files/2013/03/cevahir-680x453.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8ec",
+},
+{
+    name:"Visit historic sites",
+    photo:"https://www.eltiempo.com/files/image_640_428/uploads/2019/08/03/5d46405fb273b.jpeg",
+    itinerary:"63213f6f0c3bf93e0a76e8ec",
+},
+{
+    name:"Know the best neighborhoods",
+    photo:"https://www.estambul.net/wp-content/uploads/2015/03/barrios-de-estambul.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8ec",
+},
+{
+    name:"",
+    photo:"",
+    itinerary:"",
+},
 ]
-items.forEach(e => {
-    Activity.create({
-        name:e.name,
-        photo:e.photo,
-        itinerary:e.itinerary,
-    })
-})
