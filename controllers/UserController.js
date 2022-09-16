@@ -28,9 +28,9 @@ const userController ={
                    console.log(code)
                     if(from === 'form'){ //from form, si la data viene de del formulario de registro    
                         password = bcryptjs.hashSync(password,10);
-                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, 
+
+                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
                             //aaca hace falta enviar mail de verificacion   
-                            from: [from], loggedIn, verified, code }).save()
                         sendMail(mail,code)
                         res.status(201).json({
                             message: "User signed.",
