@@ -138,9 +138,158 @@ const items = [
     photo:"https://www.estambul.net/wp-content/uploads/2015/03/barrios-de-estambul.jpg",
     itinerary:"63213f6f0c3bf93e0a76e8ec",
 },
-{
-    name:"",
-    photo:"",
-    itinerary:"",
+//Tour by the piramids
+{name:"Full access: Ground Zero, Memorial and museum",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/07/72/12/16.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8e9"
 },
-]
+{
+name:"FDNY Memorial Wall",
+photo:"https://media-cdn.tripadvisor.com/media/photo-o/06/5c/48/b0/fdny-memorial.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8e9"
+},
+{
+name:"Memorial monument 9/11",
+photo:"https://media-cdn.tripadvisor.com/media/photo-m/1280/14/b3/aa/b3/911-memorial-nyc.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8e9"
+},
+{//Visit the tomb of tutanchamon
+name:"Statue of Liberty",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/07/25/18/e9.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ea"
+},
+{
+name:"Circle Line to Ellis Island",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0a/0a/5d/f1.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ea"
+},
+{
+name:"Helicopter ride",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/09/93/f1/d1.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ea"
+},
+{//Outdoor museum
+name:"SUMMIT One Vanderbilt experience",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0d/a5/3d/62.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8eb"
+},
+{
+name:"The Edge",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0a/8a/68/e6.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8eb"
+},
+{
+name:"Empire State Building",
+photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/39/9b/27/caption.jpg?w=1200&h=-1&s=1",
+itinerary:"63213f6f0c3bf93e0a76e8eb"
+},
+{ //Tour of the city
+name:"Top floor Eiffel tower",
+photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/15/67/96/caption.jpg?w=1100&h=-1&s=1",
+itinerary:"63213f6f0c3bf93e0a76e8e8"
+},
+{
+name:"Seine river cruise ",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/07/19/b4/f2.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8e8"
+},
+{
+name:"Free walking tour to Eiffel tower",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0b/db/8d/37.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8e8"
+},
+//Visit the mountains
+{
+name:"Skip the Line Ticket with Private Guided Tour: Louvre Museum",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/06/f9/15/d3.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ed"
+},
+{
+name:"D'Orsay museum",
+photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/26/b3/6e/20180601-122841-largejpg.jpg?w=1200&h=-1&s=1",
+itinerary:"63213f6f0c3bf93e0a76e8ed"
+},
+{
+name:"L'Orangerie museum",
+photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/15/22/9f/26/caption.jpg?w=1200&h=-1&s=1",
+itinerary:"63213f6f0c3bf93e0a76e8ed"
+},
+//Meet the golden pavilion
+{
+name:"Walk through Versailles garden",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/07/01/37/a3.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ee"
+},
+{
+name:"Palace of Versailles, Gardens and Fountain Show Tour",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0f/88/8e/3b.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ee"
+},
+{
+name:"Versailles Bike Tour with Skip-the-Line Palace Ticket",
+photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/60/ea/c1/caption.jpg?w=1200&h=-1&s=1",
+itinerary:"63213f6f0c3bf93e0a76e8ee"
+},
+{ // Day of the dead
+name:"Priority entrance to the London Eye",
+photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/0f/36/c2/60.jpg",
+itinerary:"63213f6f0c3bf93e0a76e8ef"
+},
+{
+    name:"London Eye River Cruise",
+    photo:"https://media-cdn.tripadvisor.com/media/attractions-splice-spp-720x480/07/82/70/4c.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8ef"
+},
+{
+    name:"London Eye to London Bridge (River Walk)",
+    photo:"http://www.thelondres.com/wp-content/uploads/2018/08/tower-bridge.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8ef"
+},
+{// Porto Seguro Carnival
+    name:"Buckingham Palace",
+    photo:"https://www.eliberico.com/wp-content/uploads/2021/09/buckingham-palace-640x375.jpg",
+    itinerary:"63213f6f0c3bf93e0a76e8f0"
+},
+{
+    name:"Changing of the guard walking tour",
+    photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/25/36/7c/94/1.jpg?w=1100&h=-1&s=1",
+    itinerary:"63213f6f0c3bf93e0a76e8f0"
+},
+{
+    name:"Horse Guards Parade at Whitehall",
+    photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/13/21/a7/b2/img-20180531-023447-686.jpg?w=1200&h=-1&s=1",
+    itinerary:"63213f6f0c3bf93e0a76e8f0"
+},
+{ // Attend a concert at the Sydney Opera house
+    name:"Harry Potter and the Cursed Child",
+    photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/0d/4f/b4/1a/palace-theatre.jpg?w=1200&h=-1&s=1&cx=1215&cy=791&chk=v1_94dd28e6828140c4221c",
+    itinerary:"63213f6f0c3bf93e0a76e8f1"
+},
+{
+    name:"Warner Bros. Studio: The Making of Harry Potter",
+    photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1d/5b/66/7a/caption.jpg?w=1200&h=-1&s=1",
+    itinerary:"63213f6f0c3bf93e0a76e8f1"
+},
+{
+    name:"Harry Potter Shop at Platform 9 3/4",
+    photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1a/7b/74/61/photo0jpg.jpg?w=1200&h=-1&s=1",
+    itinerary:"63213f6f0c3bf93e0a76e8f1"
+},
+// { 
+//     name:"Mount Fuji tour",
+//     photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/a0/d7/2f/awaken-your-inner-explorer.jpg?w=1200&h=-1&s=1",
+//     itinerary:""
+// },
+// {
+//     name:"Kawaguchiko Lake",
+//     photo:"https://dynamic-media-cdn.tripadvisor.com/media/photo-o/1c/d8/24/b1/caption.jpg?w=1200&h=-1&s=1",
+//     itinerary:""
+// }
+];
+items.forEach(e => {
+    Activities.create({
+        name:e.name,
+        photo:e.photo,
+        itinerary:e.itinerary,
+    })
+})
