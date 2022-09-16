@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
 });
 router.use('/cities', cityRouter)
 router.use('/auth', authRouter)
-router.use('/itinerary', itineraryRouter)
+router.use('/itineraries', itineraryRouter)
 router.use('/comments', commentsRouter)
+router.use('/activities', activityRouter)
 module.exports = router;
