@@ -1,10 +1,20 @@
 const City = require('../models/City')
+const Joi = require('joi')
+
+const validator = Joi.object({
+  city: Joi.string().pattern(/^[a-zA-Z ]+$ /).required(),
+  country: Joi.string().pattern(/^[a-zA-Z]+$ /).required(),
+  photo: Joi.string().uri().required(),
+  population: Joi.number().integer().min(1000).max(100000000).required(),
+  founded: Joi.date().required()
+})
 
 const cityController = {
   create: async (req, res) => {
     //const {city,country,photo,population,foundation} = req.body
     try {
-      let city = await new City(req.body).save()
+      let city = await validator.validateAsync(req.body)
+      await new City(req.body).save()
       res.status(201).json({
         message: 'city created successfully',
         response: city._id,
