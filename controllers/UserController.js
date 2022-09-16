@@ -1,34 +1,37 @@
 const User = require('../models/User');
 const crypto = require('crypto')
 const bcryptjs = require('bcryptjs');
-// const sendMail = require('./sendMail')
+const sendMail = require('./sendMail')
 
 const userController ={
     signUp: async (req, res) => {
+        console.log(req.body)
             let {
                 name,
                 lastName,
                 photo,  
                 country,
-                email,
+                mail,
                 password,
                 role, // el rol debe venir desde el front para usar este metodo en ambos casos (user y admin)
                 from // el from debe venir desde el frotn para avisar al metodo desde donde se crea el usuario ej: google,facebook,etc
             }= req.body
         try{
-            let user = await User.findOne({email})
+         let user = await User.findOne({mail})
+         console.log(user)
                 if (!user){
                     let loggedIn = false;
                     let verified = false;
                     let code =  crypto
                     .randomBytes(15) // le aplico el metodo para avisar que debe tener 15 digitos 
                     .toString('hex') // le aplico el metodo para avisar que debe ser hexagecimal
+                   console.log(code)
                     if(from === 'form'){ //from form, si la data viene de del formulario de registro    
                         password = bcryptjs.hashSync(password,10);
-                        user = await new User({ name, lastName, photo, country, email, password: [password], role, 
+                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, 
                             //aaca hace falta enviar mail de verificacion   
                             from: [from], loggedIn, verified, code }).save()
-                        sendMail(email,code)
+                        sendMail(mail,code)
                         res.status(201).json({
                             message: "User signed.",
                             success: true,  
@@ -36,7 +39,7 @@ const userController ={
                     } else{ // si la data viene desde cualquier red social voy a hacer otra cosa
                         password = bcryptjs.hashSync(password,10); // este metodo requiere 2 parametros, primero la contraseña que debe hashear y segundo parametro, el nivel de seguridad que requiere el hasheo (10)
                         verified = true,
-                        user = await new User({ name, lastName, photo, country, email, password: [password], role, 
+                        user = await new User({ name, lastName, photo, country, mail, password: [password], role, 
                         //aca no hace falta mail de verificacion    
                             from: [from], loggedIn, verified, code }).save()
                         res.status(201).json({
@@ -70,14 +73,18 @@ const userController ={
                 })
         }
     },
-    verifyMail: async (req, res) => {
-        const {code} = req.params
+    // el codigo generado por el metodo de signup se envia a este otro metodo a traves de params para poder verificar la cuenta
+    // luego de crearlo lo comparo con los demas perfiles ya creados 
+    // si encuentra el usuario cambiara el verified de false a true
+    // si no lo encuentra (caso raro) avisara que el mail a verificar no tiene cuenta    
+    verifyMail: async (req, res) => { 
+    const {code} = req.params
         try {
             let user = await User.findOne({ code })
             if (user) {
-                user.verified = true
-                await user.save()
-                res.status("200").redirect(301, 'http://localhost:4000/signin')
+                user.verified = true // aqui se cambia la propiedad 
+                await user.save() // y acaa se guarda en la database
+                res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
 
             } else {
                 res.status("404").json({
@@ -94,9 +101,9 @@ const userController ={
         }
     },
     signIn: async (req,res) =>{
-            const {email, password, from} = req.body
+            const {mail, password, from} = req.body
         try{
-            const user= await User.findOne({email})
+            const user= await User.findOne({mail})
                 if (!user){
                 res.status(404).json({
                     success:false,
@@ -109,7 +116,7 @@ const userController ={
                             const loginUser= {
                                 id:user._id,
                                 name: user.name,
-                                email: user.email,
+                                mail: user.mail,
                                 role: user.role,
                                 from: user.from,
                                 photo:user.photo
@@ -123,18 +130,18 @@ const userController ={
                                 response: {user: loginUser},
                                 message: "Welcome " + user.name
                             })
-                        }else{ // if password does not match
+                        }else{ 
                             res.status(400).json({
                                 success:false,
                                 message: "Wrong username or password."
                             })
                         }
-                }else{ // If user tries to log by socialmedia
-                    if(checkPass.length > 0){// if password matches
+                }else{ 
+                    if(checkPass.length > 0){
                         const loginUser= {
                             id:user._id,
                             name: user.name,
-                            email: user.email,
+                            mail: user.mail,
                             role: user.role,
                             from: user.from,
                             photo:user.photo
@@ -148,14 +155,14 @@ const userController ={
                             response: {user: loginUser},
                             message: "Welcome " + user.name
                         })
-                    }else{ // if password does not match
+                    }else{ 
                         res.status(400).json({
                             success:false,
                             message: "Invalid credentials."
                             })
                         }
                     }
-            }else{ // If user exists but is not verified
+            }else{ 
                 res.status(401).json({
                     success:false,
                     message: "Please, verify your email account and try again."
@@ -169,6 +176,32 @@ const userController ={
             })
         }
     },
+    signOut: async(req,res) => {
+        const {mail} = req.body
+        try{
+            let user = await User.findOne({mail:mail})
+                    if (user){
+                        user.loggedIn = false
+                        await user.save()
+                                res.status(200).json({
+                                    message: 'Your session has been closed successfully',
+                                    success: true,
+                                    response: user.loggedIn
+                            })
+                    } else {
+                        res.status(404).json({
+                            message: 'User not found.',
+                            success: false
+                        })
+                    }
+            } catch (error) {
+                console.log(error);
+                    res.status(400).json({
+                        message: 'Failed to sign out.',
+                        success:false
+                    })
+                }
+        },
     getUser: async (req, res) => {
         const { id } = req.params
         try {
@@ -210,7 +243,7 @@ const userController ={
             })
             } else {
                 res.status("404").json({
-                    message: "No users could be found...",
+                    message: "No users could be found.",
                     success: false,
                 })
             }
