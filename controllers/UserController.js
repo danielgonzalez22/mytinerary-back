@@ -29,8 +29,8 @@ const userController = {
             country,
             mail,
             password,
-            role, // el rol debe venir desde el front para usar este metodo en ambos casos (user y admin)
-            from // el from debe venir desde el frotn para avisar al metodo desde donde se crea el usuario ej: google,facebook,etc
+            role, 
+            from 
         } = req.body
         try {
             let user = await validator.validateAsync(req.body)
@@ -40,29 +40,28 @@ const userController = {
                 let loggedIn = false;
                 let verified = false;
                 let code = crypto
-                    .randomBytes(15) // le aplico el metodo para avisar que debe tener 15 digitos 
-                    .toString('hex') // le aplico el metodo para avisar que debe ser hexagecimal
+                    .randomBytes(15) 
+                    .toString('hex')
                 console.log(code)
-                if (from === 'form') { //from form, si la data viene de del formulario de registro    
+                if (from === 'form') {  
                     password = bcryptjs.hashSync(password, 10);
 
                     user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
-                    //aaca hace falta enviar mail de verificacion   
+                     
                     sendMail(mail, code)
                     res.status(201).json({
                         message: "User signed.",
                         success: true,
                     })
-                } else { // si la data viene desde cualquier red social voy a hacer otra cosa
-                    password = bcryptjs.hashSync(password, 10); // este metodo requiere 2 parametros, primero la contraseña que debe hashear y segundo parametro, el nivel de seguridad que requiere el hasheo (10)
+                } else {
+                    password = bcryptjs.hashSync(password, 10); 
                     verified = true,
                         user = await new User({
                             name, lastName, photo, country, mail, password: [password], role,
-                            //aca no hace falta mail de verificacion    
                             from: [from], loggedIn, verified, code
                         }).save()
                     res.status(201).json({
-                        message: "User signed from " + from, // de esta forma avisara cual es el medio desde el que se registro el usuario
+                        message: "User signed from " + from, 
                         success: true,
                     })
                 }
@@ -92,17 +91,14 @@ const userController = {
             })
         }
     },
-    // el codigo generado por el metodo de signup se envia a este otro metodo a traves de params para poder verificar la cuenta
-    // luego de crearlo lo comparo con los demas perfiles ya creados 
-    // si encuentra el usuario cambiara el verified de false a true
-    // si no lo encuentra (caso raro) avisara que el mail a verificar no tiene cuenta    
+    
     verifyMail: async (req, res) => {
         const { code } = req.params
         try {
             let user = await User.findOne({ code })
             if (user) {
-                user.verified = true // aqui se cambia la propiedad 
-                await user.save() // y acaa se guarda en la database
+                user.verified = true 
+                await user.save() 
                 res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
 
             } else {
