@@ -1,4 +1,16 @@
 const Activity = require('../models/Activity')
+// const Joi = require('joi')
+
+// const validator = Joi.object({
+//     "city": Joi.string() ,
+//         "lastName": Joi.string() ,
+//         "photo": Joi.string().uri(),  
+//         "country":Joi.string() ,
+//         "email": Joi.string(),
+//         "password":Joi.string() ,
+//         "role":Joi.string(), 
+//         "from" :Joi.string() 
+// })
 
 
 const activitiesController = {

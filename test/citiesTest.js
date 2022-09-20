@@ -9,7 +9,7 @@ describe("POST /cities", function () {
       .send({
         "city": "Dubai",
         "country": "United Arab Emirates",
-        "photo": "http://localhost:400/image",
+        "photo": "http://localhost:4000/image",
         "population": 3310000,
         "foundation": 1883,
       })
