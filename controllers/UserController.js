@@ -5,16 +5,16 @@ const sendMail = require('./sendMail')
 const Joi = require('joi')
 
 const validator = Joi.object({
-  name: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required(),
-  lastName: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required(),
+  name: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Name must have between 3 and 15 characters, letters only.')),
+  lastName: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Last name must have between 3 and 15 characters, letters only.')),
   mail: Joi.alternatives().try(Joi.string()
     .lowercase()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
   )
-    .required().error(new Error("Invalid email")),
-  photo: Joi.string().uri().required(),
-  country: Joi.string().min(4).max(30).required(),
-  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
+    .required().error(new Error("Invalid email address")),
+  photo: Joi.string().uri().required().error(new Error("Invalid photo url")),
+  country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letters only.")),
+  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required().error(new Error("Password must be at least 6 characters long, containing letters and/or numbers.")),
   role: Joi.string().min(3).max(15).required(),
   from: Joi.string().min(3).max(15).required()
 })
@@ -33,9 +33,8 @@ const userController = {
       from
     } = req.body
     try {
-      let user = await validator.validateAsync(req.body)
-      await User.findOne({ mail })
-      console.log(user)
+      let result = await validator.validateAsync(req.body)
+      let user = await User.findOne({ mail })
       if (!user) {
         let loggedIn = false;
         let verified = false;
@@ -45,12 +44,10 @@ const userController = {
         console.log(code)
         if (from === 'form') {
           password = bcryptjs.hashSync(password, 10);
-
           user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
-
           sendMail(mail, code)
           res.status(201).json({
-            message: "User signed.",
+            message: "User signed up succesfully, please verify your email and log in.",
             success: true,
           })
         } else {
@@ -67,8 +64,8 @@ const userController = {
         }
       } else {
         if (user.from.includes(from)) {
-          res.status(200).json({
-            message: "User already exists.",
+          res.status(409).json({
+            message: "User already exists. Please log in!",
             success: false
           })
         } else {
@@ -86,7 +83,7 @@ const userController = {
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "could't signed up",
+        message: error.message,
         success: false
       })
     }
