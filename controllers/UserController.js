@@ -5,15 +5,15 @@ const sendMail = require('./sendMail')
 const Joi = require('joi')
 
 const validator = Joi.object({
-  name: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required().error(new Error('Name must have between 3 and 15 characters, letters only.')),
-  lastName: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required().error(new Error('Last name must have between 3 and 15 characters, letters only.')),
+  name: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Name must have between 3 and 15 characters, letters only.')),
+  lastName: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Last name must have between 3 and 15 characters, letters only.')),
   mail: Joi.alternatives().try(Joi.string()
     .lowercase()
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
   )
     .required().error(new Error("Invalid email address")),
   photo: Joi.string().uri().required().error(new Error("Invalid photo url")),
-  country: Joi.string().pattern(/^[a-zA-Z ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letter only.")),
+  country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letters only.")),
   password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required().error(new Error("Password must be at least 6 characters long, containing letters and/or numbers.")),
   role: Joi.string().min(3).max(15).required(),
   from: Joi.string().min(3).max(15).required()
