@@ -6,7 +6,7 @@ const validator = Joi.object({
   user: Joi.string().hex().required(),
   city: Joi.string().hex().required(),
   price: Joi.number().integer().min(0).max(2000).required(),
-  likes: Joi.array().required(),
+  likes: joi.array().unique((a, b) => a.property === b.property).required(),
   tags: Joi.array().required(),
   duration: Joi.number().integer().min(1).max(240).required()
 })
@@ -113,27 +113,54 @@ const itineraryController = {
   },
   removeItinerary: async (req, res) => {
     const { id } = req.params
+    let {userId, role}= req.user
     try {
-      let itnierary = await Itinerary.findOneAndRemove({ _id: id })
-      if (itnierary) {
+    let itinerary = await Itinerary.findOneAndRemove({ _id: id })
+    if (itinerary.user === userId || role=== "admin"){  
         res.status("200").json({
-          message: "itinerary deleted successfully",
-          success: true,
-        })
-      } else {
-        res.status(404).json({
-          message: "couldn't delete, no such itinerary were found",
-          success: false
-        })
-      }
+        message: "itinerary deleted succesfully.",
+        success: true,
+    })
+}else{
+    res.status("401").json({
+        message: "unauthorized",
+        success: true,
+    })
+}   
     } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "error while trying to delete an itinerary",
-        success: false,
-      })
+        console.log(error)
+        res.status("400").json({
+            message: "Error",
+            success: false,
+        })
     }
-  }
+},
+likeDislike: async (req,res) =>{
+    let {userId} = req.user
+    let {id} = req.params
+    try{
+        let itinerary = await Itinerary.findOne({_id: id})
+        if (itinerary && itinerary.likes.includes(userId)){
+            
+                await Itinerary.findOneAndUpdate({_id:id}, {$pull:{likes:userId}}, {new:true})
+                res.status(200).json({
+                    success: true,
+                    message: "you disliked this Itinerary"
+                })
+            } else {
+                await Itinerary.findOneAndUpdate({_id:id}, {$push:{likes:userId}}, {new:true})
+                res.status(200).json({
+                    success: true,
+                    message: "you liked this Itinerary"
+                })
+            }
+    }catch(error){
+        console.log(error)
+        res.status(400).json({
+            success: false,
+            message: "error"
+        })
+    }
 }
-
+}
 module.exports = itineraryController

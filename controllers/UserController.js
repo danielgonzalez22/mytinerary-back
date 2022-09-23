@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const bcryptjs = require('bcryptjs');
 const sendMail = require('./sendMail')
 const Joi = require('joi')
+const jwt = require('jsonwebtoken')
 
 const validator = Joi.object({
     name: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required(),
@@ -11,7 +12,7 @@ const validator = Joi.object({
         .lowercase()
         .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
     )
-        .required().error(new Error("Invalid email")),
+        .required().error(new Error("Invalid mail")),
     photo: Joi.string().uri().required(),
     country: Joi.string().min(4).max(30).required(),
     password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
@@ -33,7 +34,7 @@ const userController = {
             from // el from debe venir desde el frotn para avisar al metodo desde donde se crea el usuario ej: google,facebook,etc
         } = req.body
         try {
-            let user = await validator.validateAsync(req.body)
+            let user = await validator.validateAsync(req.body) // me guardo todo dentro de validator y le pido que valide req.body
             await User.findOne({ mail })
             console.log(user)
             if (!user) {
@@ -67,13 +68,13 @@ const userController = {
                     })
                 }
             } else {
-                if (user.from.includes(from)) {
+                if (user.from.includes(from)) { // si la propiedad from del usuario (que es un array)incluye from esa forma de registro 
                     res.status(200).json({
                         message: "User already exists.",
                         success: false
                     })
                 } else {
-                    user.from.push(from);
+                    user.from.push(from); // si no incluye esa forma de registro se la agrego
                     user.verified = true;
                     password = bcryptjs.hashSync(password, 10)
                     user.password.push(password)
@@ -107,7 +108,7 @@ const userController = {
 
             } else {
                 res.status("404").json({
-                    message: "This email does not belong to an account.",
+                    message: "This mail does not belong to an account.",
                     success: false,
                 })
             }
@@ -184,7 +185,7 @@ const userController = {
             } else {
                 res.status(401).json({
                     success: false,
-                    message: "Please, verify your email account and try again."
+                    message: "Please, verify your mail account and try again."
                 })
             }
         } catch (error) {
@@ -274,24 +275,50 @@ const userController = {
             })
         }
     },
-    modifyUser: async (req, res) => {
-        const { id } = req.params
-        let putUser = {}
+    modifyUser: async (req, res)=>{
+        const {mail} = req.body
+        const {mail: uMail, role:userRole} = req.user
         try {
-            putUser = await User.findOneAndUpdate({ _id: id }, req.body, { new: true })
-            if (putUser) {
-                res.status("200").json({
-                    message: "User updated.",
-                    response: putUser,
-                    success: true,
-                })
+            console.log(mail)
+            if (uMail.toString() === mail || userRole === "admin") {
+                let putUser = await User.findOne({ mail: mail })
+                if (putUser) {
+                        let {
+                            name,
+                            lastname,
+                            photo,
+                            country,
+                            role
+                        } = req.body;
+                    if (userRole !== "admin") {
+                            putUser = await User.findOneAndUpdate(
+                            { mail:mail }, {name,lastname,photo,country}, { new: true })
+                                res.status("200").json({
+                                    message: "User updated.",
+                                    response: putUser,
+                                    success: true,
+                            })
+                    } else if(userRole === "admin") {
+                            putUser = await User.findOneAndUpdate(
+                            { mail:mail }, {name,lastname,photo,country,role}, { new: true })
+                            res.status("200").json({
+                                message: "User updated.",
+                                response: putUser,
+                                success: true,
+                            })
+                    } else{
+                        res.status("404").json({
+                            message: "This User does not exist.",
+                            success: false,
+                        })
+                    }
             } else {
-                res.status("404").json({
-                    message: "this User does not exist.",
+                res.status("401").json({
+                    message: "Unahutorized",
                     success: false,
                 })
             }
-        } catch (error) {
+        }}catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "Error",
@@ -314,7 +341,29 @@ const userController = {
                 success: false,
             })
         }
-    }
+    },
+    verifyToken: (req, res) => {
+        if (req.user !== null){
+            res.status(200).json({
+                success:true,
+                response:{
+                    user: {
+                        id: req.user._id,
+                        name: req.user.name,
+                        mail: req.user.mail,
+                        role: req.user.role,
+                        photo:req.user.photo
+                    }
+                },
+                message: 'Welcome' + req.user.name+'!'
+            })
+        }else {
+            res.json({
+                success:false,
+                message: "Sign in please"
+            })
+        }
+        }
 }
 
 module.exports = userController;
