@@ -1,10 +1,12 @@
-const { Router } = require('express');
-var express = require('express');
-var router = express.Router();
-const { create, getComments } = require('../controllers/CommentController.js')
+const express = require('express');
+let passport = require('../config/passport');
+const router = express.Router();
+const {addComment, getComments, modifyComment, removeComment} = require('../controllers/CommentController.js')
 
-router.post('/', create);
-router.get('/', getComments)
-// router.get('/:id', read);
+router.post('/',passport.authenticate('jwt', {session:false}), addComment);
+router.get('/', getComments);
+router.put('/:id',passport.authenticate('jwt', {session:false}), modifyComment);
+router.delete('/:id',passport.authenticate('jwt', {session:false}), removeComment)
+
 
 module.exports = router;

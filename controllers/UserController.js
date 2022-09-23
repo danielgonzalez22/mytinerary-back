@@ -3,6 +3,7 @@ const crypto = require('crypto')
 const bcryptjs = require('bcryptjs');
 const sendMail = require('./sendMail')
 const Joi = require('joi')
+const jwt = require('jsonwebtoken')
 
 const validator = Joi.object({
   name: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Name must have between 3 and 15 characters, letters only.')),
@@ -12,7 +13,7 @@ const validator = Joi.object({
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
   )
     .required().error(new Error("Invalid email address")),
-  photo: Joi.string().uri().required().error(new Error("Invalid photo url")),
+  photo: Joi.string().uri().required().error(new Error("Invalid photo url.")),
   country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letters only.")),
   password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required().error(new Error("Password must be at least 6 characters long, containing letters and/or numbers.")),
   role: Joi.string().min(3).max(15).required(),
@@ -21,7 +22,6 @@ const validator = Joi.object({
 
 const userController = {
   signUp: async (req, res) => {
-    console.log(req.body)
     let {
       name,
       lastName,
@@ -41,7 +41,6 @@ const userController = {
         let code = crypto
           .randomBytes(15)
           .toString('hex')
-        console.log(code)
         if (from === 'form') {
           password = bcryptjs.hashSync(password, 10);
           user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
@@ -98,213 +97,264 @@ const userController = {
         await user.save()
         res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
 
-      } else {
-        res.status("404").json({
-          message: "This email does not belong to an account",
-          success: false,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "Error",
-        success: false,
-      })
-    }
-  },
-  signIn: async (req, res) => {
-    const { mail, password, from } = req.body
-    try {
-      const user = await User.findOne({ mail })
-      if (!user) {
-        res.status(404).json({
-          success: false,
-          message: "No account found with the email address provided, please try again... Or sign up",
-        })
-      } else if (user.verified) {
-        const checkPass = user.password.filter(passwordElement => bcryptjs.compareSync(password, passwordElement))
-        if (from === 'form') {
-          if (checkPass.length > 0) {
-            const loginUser = {
-              id: user._id,
-              name: user.name,
-              mail: user.mail,
-              role: user.role,
-              from: user.from,
-              photo: user.photo
+            } else {
+                res.status("404").json({
+                    message: "This mail does not belong to an account.",
+                    success: false,
+                })
             }
-            user.loggedIn = true
-            await user.save()
-
-            res.status(200).json({
-              success: true,
-              response: { user: loginUser },
-              message: "¡Welcome back, " + user.name + "!"
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                success: false,
             })
-          } else {
-            res.status(400).json({
-              success: false,
-              message: "Wrong password"
-            })
-          }
-        } else {
-          if (checkPass.length > 0) {
-            const loginUser = {
-              id: user._id,
-              name: user.name,
-              mail: user.mail,
-              role: user.role,
-              from: user.from,
-              photo: user.photo
-            }
-            user.loggedIn = true
-            await user.save()
-            res.status(200).json({
-              success: true,
-              response: { user: loginUser },
-              message: "¡Welcome back, " + user.name + "!"
-            })
-          } else {
-            res.status(400).json({
-              success: false,
-              message: "Invalid credentials"
-            })
-          }
         }
-      } else {
-        res.status(401).json({
-          success: false,
-          message: "Please check your email and verify your account before logging in"
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status(400).json({
-        success: false,
-        message: "Error while trying to sign in"
-      })
-    }
-  },
-  signOut: async (req, res) => {
-    const { mail } = req.body
-    try {
-      let user = await User.findOne({ mail: mail })
-      if (user) {
-        user.loggedIn = false
-        await user.save()
-        res.status(200).json({
-          message: 'Your session has been closed successfully',
-          success: true,
-          response: user.loggedIn
-        })
-      } else {
-        res.status(404).json({
-          message: 'User not found.',
-          success: false
-        })
-      }
-    } catch (error) {
-      console.log(error);
-      res.status(400).json({
-        message: 'Failed to sign out.',
-        success: false
-      })
-    }
-  },
-  getUser: async (req, res) => {
-    const { id } = req.params
-    try {
-      let user = await User.findOne({ _id: id })
-        .populate('itineraries', { name: 1, city: 1 })
-      if (user) {
-        res.status("200").json({
-          message: "Found.",
-          response: user,
-          success: true,
-        })
-      } else {
-        res.status("404").json({
-          message: "Coud not be found.",
-          success: false,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "Error",
-        success: false,
-      })
-    }
-  },
-  getUsers: async (req, res) => {
-    let users
-    let query = {}
-    if (req.query.users) {
-      query.users = req.query.users
-    }
-    try {
-      users = await User.find(query)
-      if (users) {
-        res.status("200").json({
-          message: "Users found!",
-          response: users,
-          success: true,
-        })
-      } else {
-        res.status("404").json({
-          message: "No users could be found.",
-          success: false,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "error",
-        success: false,
-      })
-    }
-  },
-  modifyUser: async (req, res) => {
-    const { id } = req.params
-    let putUser = {}
-    try {
-      putUser = await User.findOneAndUpdate({ _id: id }, req.body, { new: true })
-      if (putUser) {
-        res.status("200").json({
-          message: "User updated.",
-          response: putUser,
-          success: true,
-        })
-      } else {
-        res.status("404").json({
-          message: "this User does not exist.",
-          success: false,
-        })
-      }
-    } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "Error",
-        success: false,
-      })
-    }
-  },
-  removeUser: async (req, res) => {
-    const { id } = req.params
-    try {
-      await User.findOneAndDelete({ _id: id })
-      res.status("200").json({
-        message: "You deleted an User.",
-        success: true,
-      })
-    } catch (error) {
-      console.log(error)
-      res.status("400").json({
-        message: "Error",
-        success: false,
-      })
-    }
-  }
+    },
+    signIn: async (req, res) => {
+        const { mail, password, from } = req.body
+        try {
+            const user = await User.findOne({ mail })
+            if (!user) {
+                res.status(404).json({
+                    success: false,
+                    message: "User does not exist, please sign up"
+                })
+            } else if (user.verified) {
+                const checkPass = user.password.filter(passwordElement => bcryptjs.compareSync(password, passwordElement))
+                if (from === 'form') {
+                    if (checkPass.length > 0) {
+                        const loginUser = {
+                            id: user._id,
+                            name: user.name,
+                            mail: user.mail,
+                            role: user.role,
+                            from: user.from,
+                            photo: user.photo
+                        }
+
+                        user.loggedIn = true
+                        await user.save()
+
+                        res.status(200).json({
+                            success: true,
+                            response: { user: loginUser },
+                            message: "Welcome " + user.name
+                        })
+                    } else {
+                        res.status(400).json({
+                            success: false,
+                            message: "Wrong username or password."
+                        })
+                    }
+                } else {
+                    if (checkPass.length > 0) {
+                        const loginUser = {
+                            id: user._id,
+                            name: user.name,
+                            mail: user.mail,
+                            role: user.role,
+                            from: user.from,
+                            photo: user.photo
+                        }
+
+                        user.loggedIn = true
+                        await user.save()
+
+                        res.status(200).json({
+                            success: true,
+                            response: { user: loginUser },
+                            message: "Welcome " + user.name
+                        })
+                    } else {
+                        res.status(400).json({
+                            success: false,
+                            message: "Invalid credentials."
+                        })
+                    }
+                }
+            } else {
+                res.status(401).json({
+                    success: false,
+                    message: "Please, verify your mail account and try again."
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(400).json({
+                success: false,
+                message: "Error signing in."
+            })
+        }
+    },
+    signOut: async (req, res) => {
+        const { mail } = req.body
+        try {
+            let user = await User.findOne({ mail: mail })
+            if (user) {
+                user.loggedIn = false
+                await user.save()
+                res.status(200).json({
+                    message: 'Your session has been closed successfully',
+                    success: true,
+                    response: user.loggedIn
+                })
+            } else {
+                res.status(404).json({
+                    message: 'User not found.',
+                    success: false
+                })
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({
+                message: 'Failed to sign out.',
+                success: false
+            })
+        }
+    },
+    getUser: async (req, res) => {
+        const { id } = req.params
+        try {
+            let user = await User.findOne({ _id: id })
+                .populate('itineraries', { name: 1, city: 1 })
+            if (user) {
+                res.status("200").json({
+                    message: "Found.",
+                    response: user,
+                    success: true,
+                })
+            } else {
+                res.status("404").json({
+                    message: "Coud not be found.",
+                    success: false,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                success: false,
+            })
+        }
+    },
+    getUsers: async (req, res) => {
+        let users
+        let query = {}
+        if (req.query.users) {
+            query.users = req.query.users
+        }
+        try {
+            users = await User.find(query)
+            if (users) {
+                res.status("200").json({
+                    message: "Users found!",
+                    response: users,
+                    success: true,
+                })
+            } else {
+                res.status("404").json({
+                    message: "No users could be found.",
+                    success: false,
+                })
+            }
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "error",
+                success: false,
+            })
+        }
+    },
+    modifyUser: async (req, res)=>{
+        const {mail} = req.body
+        const {mail: uMail, role:userRole} = req.user
+        try {
+            console.log(mail)
+            if (uMail.toString() === mail || userRole === "admin") {
+                let putUser = await User.findOne({ mail: mail })
+                if (putUser) {
+                        let {
+                            name,
+                            lastname,
+                            photo,
+                            country,
+                            role
+                        } = req.body;
+                    if (userRole !== "admin") {
+                            putUser = await User.findOneAndUpdate(
+                            { mail:mail }, {name,lastname,photo,country}, { new: true })
+                                res.status("200").json({
+                                    message: "User updated.",
+                                    response: putUser,
+                                    success: true,
+                            })
+                    } else if(userRole === "admin") {
+                            putUser = await User.findOneAndUpdate(
+                            { mail:mail }, {name,lastname,photo,country,role}, { new: true })
+                            res.status("200").json({
+                                message: "User updated.",
+                                response: putUser,
+                                success: true,
+                            })
+                    } else{
+                        res.status("404").json({
+                            message: "This User does not exist.",
+                            success: false,
+                        })
+                    }
+            } else {
+                res.status("401").json({
+                    message: "Unahutorized",
+                    success: false,
+                })
+            }
+        }}catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                success: false,
+            })
+        }
+    },
+    removeUser: async (req, res) => {
+        const { id } = req.params
+        try {
+            await User.findOneAndDelete({ _id: id })
+            res.status("200").json({
+                message: "You deleted an User.",
+                success: true,
+            })
+        } catch (error) {
+            console.log(error)
+            res.status("400").json({
+                message: "Error",
+                success: false,
+            })
+        }
+    },
+    verifyToken: (req, res) => {
+        if (req.user !== null){
+            res.status(200).json({
+                success:true,
+                response:{
+                    user: {
+                        id: req.user._id,
+                        name: req.user.name,
+                        mail: req.user.mail,
+                        role: req.user.role,
+                        photo:req.user.photo
+                    }
+                },
+                message: 'Welcome' + req.user.name+'!'
+            })
+        }else {
+            res.json({
+                success:false,
+                message: "Sign in please"
+            })
+        }
+        }
 }
 
 module.exports = userController;
