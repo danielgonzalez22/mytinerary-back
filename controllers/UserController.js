@@ -6,105 +6,96 @@ const Joi = require('joi')
 const jwt = require('jsonwebtoken')
 
 const validator = Joi.object({
-    name: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required(),
-    lastName: Joi.string().pattern(/^[a-zA-Z ]+$/).min(3).max(15).required(),
-    mail: Joi.alternatives().try(Joi.string()
-        .lowercase()
-        .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
-    )
-        .required().error(new Error("Invalid mail")),
-    photo: Joi.string().uri().required(),
-    country: Joi.string().min(4).max(30).required(),
-    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-    role: Joi.string().min(3).max(15).required(),
-    from: Joi.string().min(3).max(15).required()
+  name: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Name must have between 3 and 15 characters, letters only.')),
+  lastName: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('Last name must have between 3 and 15 characters, letters only.')),
+  mail: Joi.alternatives().try(Joi.string()
+    .lowercase()
+    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
+  )
+    .required().error(new Error("Invalid email address")),
+  photo: Joi.string().uri().required().error(new Error("Invalid photo url.")),
+  country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letters only.")),
+  password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required().error(new Error("Password must be at least 6 characters long, containing letters and/or numbers.")),
+  role: Joi.string().min(3).max(15).required(),
+  from: Joi.string().min(3).max(15).required()
 })
 
 const userController = {
-    signUp: async (req, res) => {
-        console.log(req.body)
-        let {
-            name,
-            lastName,
-            photo,
-            country,
-            mail,
-            password,
-            role, // el rol debe venir desde el front para usar este metodo en ambos casos (user y admin)
-            from // el from debe venir desde el frotn para avisar al metodo desde donde se crea el usuario ej: google,facebook,etc
-        } = req.body
-        try {
-            let user = await validator.validateAsync(req.body) // me guardo todo dentro de validator y le pido que valide req.body
-            await User.findOne({ mail })
-            console.log(user)
-            if (!user) {
-                let loggedIn = false;
-                let verified = false;
-                let code = crypto
-                    .randomBytes(15) // le aplico el metodo para avisar que debe tener 15 digitos 
-                    .toString('hex') // le aplico el metodo para avisar que debe ser hexagecimal
-                console.log(code)
-                if (from === 'form') { //from form, si la data viene de del formulario de registro    
-                    password = bcryptjs.hashSync(password, 10);
-
-                    user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
-                    //aaca hace falta enviar mail de verificacion   
-                    sendMail(mail, code)
-                    res.status(201).json({
-                        message: "User signed.",
-                        success: true,
-                    })
-                } else { // si la data viene desde cualquier red social voy a hacer otra cosa
-                    password = bcryptjs.hashSync(password, 10); // este metodo requiere 2 parametros, primero la contraseña que debe hashear y segundo parametro, el nivel de seguridad que requiere el hasheo (10)
-                    verified = true,
-                        user = await new User({
-                            name, lastName, photo, country, mail, password: [password], role,
-                            //aca no hace falta mail de verificacion    
-                            from: [from], loggedIn, verified, code
-                        }).save()
-                    res.status(201).json({
-                        message: "User signed from " + from, // de esta forma avisara cual es el medio desde el que se registro el usuario
-                        success: true,
-                    })
-                }
-            } else {
-                if (user.from.includes(from)) { // si la propiedad from del usuario (que es un array)incluye from esa forma de registro 
-                    res.status(200).json({
-                        message: "User already exists.",
-                        success: false
-                    })
-                } else {
-                    user.from.push(from); // si no incluye esa forma de registro se la agrego
-                    user.verified = true;
-                    password = bcryptjs.hashSync(password, 10)
-                    user.password.push(password)
-                    await user.save()
-                    res.status(201).json({
-                        message: "User signed up from " + from,
-                        success: true
-                    })
-                }
-            }
-        } catch (error) {
-            console.log(error)
-            res.status(400).json({
-                message: "could't signed up",
-                success: false
-            })
+  signUp: async (req, res) => {
+    let {
+      name,
+      lastName,
+      photo,
+      country,
+      mail,
+      password,
+      role,
+      from
+    } = req.body
+    try {
+      let result = await validator.validateAsync(req.body)
+      let user = await User.findOne({ mail })
+      if (!user) {
+        let loggedIn = false;
+        let verified = false;
+        let code = crypto
+          .randomBytes(15)
+          .toString('hex')
+        if (from === 'form') {
+          password = bcryptjs.hashSync(password, 10);
+          user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
+          sendMail(mail, code)
+          res.status(201).json({
+            message: "User signed up succesfully, please verify your email and log in.",
+            success: true,
+          })
+        } else {
+          password = bcryptjs.hashSync(password, 10);
+          verified = true,
+            user = await new User({
+              name, lastName, photo, country, mail, password: [password], role,
+              from: [from], loggedIn, verified, code
+            }).save()
+          res.status(201).json({
+            message: "User signed from " + from,
+            success: true,
+          })
         }
-    },
-    // el codigo generado por el metodo de signup se envia a este otro metodo a traves de params para poder verificar la cuenta
-    // luego de crearlo lo comparo con los demas perfiles ya creados 
-    // si encuentra el usuario cambiara el verified de false a true
-    // si no lo encuentra (caso raro) avisara que el mail a verificar no tiene cuenta    
-    verifyMail: async (req, res) => {
-        const { code } = req.params
-        try {
-            let user = await User.findOne({ code })
-            if (user) {
-                user.verified = true // aqui se cambia la propiedad 
-                await user.save() // y acaa se guarda en la database
-                res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
+      } else {
+        if (user.from.includes(from)) {
+          res.status(409).json({
+            message: "User already exists. Please log in!",
+            success: false
+          })
+        } else {
+          user.from.push(from);
+          user.verified = true;
+          password = bcryptjs.hashSync(password, 10)
+          user.password.push(password)
+          await user.save()
+          res.status(201).json({
+            message: "User signed up from " + from,
+            success: true
+          })
+        }
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(400).json({
+        message: error.message,
+        success: false
+      })
+    }
+  },
+
+  verifyMail: async (req, res) => {
+    const { code } = req.params
+    try {
+      let user = await User.findOne({ code })
+      if (user) {
+        user.verified = true
+        await user.save()
+        res.status("200").redirect(301, 'https://mytinerary-front-cgs.herokuapp.com/')
 
             } else {
                 res.status("404").json({
