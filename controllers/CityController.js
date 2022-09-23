@@ -2,12 +2,12 @@ const City = require('../models/City')
 const Joi = require('joi')
 
 const validator = Joi.object({
-  city: Joi.string().pattern(/^[a-zA-Zñ ]+$ /).min(3).max(15).required().error(new Error('City name must have between 3 and 15 characters, letters only.')),
-  country: Joi.string().pattern(/^[a-zA-Zñ ]+$ /).min(4).max(15).required().error(new Error('Country name must have between 4 and 15 characters, letters only.')),
+  city: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('City name must have between 3 and 15 characters, letters only.')),
+  country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(15).required().error(new Error('Country name must have between 4 and 15 characters, letters only.')),
   photo: Joi.string().uri().required().error(new Error("Invalid photo url.")),
   population: Joi.number().integer().min(1000).max(100000000).required().error(new Error("Population must be a number between 1000 and 100M.")),
   foundation: Joi.date().required().error(new Error("Invalid foundation year.")),
-  description: Joi.string().pattern(/^[a-zA-Zñ ]+$ /).min(10).max(300).required().error(new Error('Description text must have between 10 and 300 characters, letters only.'))
+  description: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(10).max(300).required().error(new Error('Description text must have between 10 and 300 characters, letters only.'))
 })
 
 const cityController = {
@@ -23,7 +23,7 @@ const cityController = {
       })
     } catch (error) {
       res.status(400).json({
-        message: "Error while trying to create a city",
+        message: error.message,
         success: false
       })
     }
