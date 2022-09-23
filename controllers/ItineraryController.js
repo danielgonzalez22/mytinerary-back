@@ -6,7 +6,7 @@ const validator = Joi.object({
   user: Joi.string().hex().required(),
   city: Joi.string().hex().required(),
   price: Joi.number().integer().min(0).max(2000).required(),
-  likes: joi.array().unique((a, b) => a.property === b.property).required(),
+  likes: Joi.array().unique((a, b) => a.property === b.property).required(),
   tags: Joi.array().required(),
   duration: Joi.number().integer().min(1).max(240).required()
 })
