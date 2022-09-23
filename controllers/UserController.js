@@ -12,7 +12,7 @@ const validator = Joi.object({
     .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "ar", "org"] } }),
   )
     .required().error(new Error("Invalid email address")),
-  photo: Joi.string().uri().required().error(new Error("Invalid photo url")),
+  photo: Joi.string().uri().required().error(new Error("Invalid photo url.")),
   country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(30).required().error(new Error("Country name must be at least 4 characters long, letters only.")),
   password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{6,30}$')).required().error(new Error("Password must be at least 6 characters long, containing letters and/or numbers.")),
   role: Joi.string().min(3).max(15).required(),
@@ -21,7 +21,6 @@ const validator = Joi.object({
 
 const userController = {
   signUp: async (req, res) => {
-    console.log(req.body)
     let {
       name,
       lastName,
@@ -41,7 +40,6 @@ const userController = {
         let code = crypto
           .randomBytes(15)
           .toString('hex')
-        console.log(code)
         if (from === 'form') {
           password = bcryptjs.hashSync(password, 10);
           user = await new User({ name, lastName, photo, country, mail, password: [password], role, from: [from], loggedIn, verified, code }).save()
