@@ -41,7 +41,7 @@ const itineraryController = {
         })
       } else {
         res.status("404").json({
-          message: "itnierary not found",
+          message: "itinerary not found",
           succes: false,
         })
       }
