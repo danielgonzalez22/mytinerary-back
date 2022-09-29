@@ -2,20 +2,20 @@ const Itinerary = require("../models/Itinerary")
 const Joi = require('joi')
 
 const validator = Joi.object({
-  name: Joi.string().min(3).max(50).required(),
+  name: Joi.string().pattern(/^[a-zA-Z0-9ñ ]+$/).min(3).max(50).required().error(new Error('Itinerary name must have between 3 and 50 characters, letters and/or numbers')),
   user: Joi.string().hex().required(),
   city: Joi.string().hex().required(),
-  price: Joi.number().integer().min(0).max(2000).required(),
-  likes: Joi.array().required(),
-  tags: Joi.array().required(),
-  duration: Joi.number().integer().min(1).max(240).required()
+  price: Joi.number().integer().min(0).max(2000).required().error(new Error('Itinerary price must be a number between 0 and 2000')),
+  likes: Joi.array().unique((a, b) => a.property === b.property),
+  tags: Joi.string().required(),
+  duration: Joi.number().integer().min(1).max(240).required().error(new Error('Duration must be a number between 1 and 240')),
 })
 
 const itineraryController = {
   addItinerary: async (req, res) => {
     try {
-      let itinerary = await validator.validateAsync(req.body)
-      await new Itinerary(req.body).save()
+      let result = await validator.validateAsync(req.body)
+      let itinerary = await new Itinerary(req.body).save()
       res.status("201").json({
         message: "itinerary added successfully.",
         response: itinerary._id,
@@ -24,7 +24,7 @@ const itineraryController = {
     } catch (error) {
       console.log(error)
       res.status("400").json({
-        message: "error while trying to add an itinerary.",
+        message: error.message,
         success: false,
       })
     }
@@ -41,7 +41,7 @@ const itineraryController = {
         })
       } else {
         res.status("404").json({
-          message: "itnierary not found",
+          message: "itinerary not found",
           succes: false,
         })
       }
@@ -113,27 +113,54 @@ const itineraryController = {
   },
   removeItinerary: async (req, res) => {
     const { id } = req.params
+    let { userId, role } = req.user
     try {
-      let itnierary = await Itinerary.findOneAndRemove({ _id: id })
-      if (itnierary) {
+      let itinerary = await Itinerary.findOneAndRemove({ _id: id })
+      if (itinerary.user === userId || role === "admin") {
         res.status("200").json({
-          message: "itinerary deleted successfully",
+          message: "itinerary deleted succesfully.",
           success: true,
         })
       } else {
-        res.status(404).json({
-          message: "couldn't delete, no such itinerary were found",
-          success: false
+        res.status("401").json({
+          message: "unauthorized",
+          success: true,
         })
       }
     } catch (error) {
       console.log(error)
       res.status("400").json({
-        message: "error while trying to delete an itinerary",
+        message: "Error",
         success: false,
+      })
+    }
+  },
+  likeDislike: async (req, res) => {
+    let { userId } = req.user
+    let { id } = req.params
+    try {
+      let itinerary = await Itinerary.findOne({ _id: id })
+      if (itinerary && itinerary.likes.includes(userId)) {
+
+        await Itinerary.findOneAndUpdate({ _id: id }, { $pull: { likes: userId } }, { new: true })
+        res.status(200).json({
+          success: true,
+          message: "you disliked this Itinerary"
+        })
+      } else {
+        await Itinerary.findOneAndUpdate({ _id: id }, { $push: { likes: userId } }, { new: true })
+        res.status(200).json({
+          success: true,
+          message: "you liked this Itinerary"
+        })
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(400).json({
+        success: false,
+        message: "error"
       })
     }
   }
 }
-
 module.exports = itineraryController

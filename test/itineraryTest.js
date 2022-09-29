@@ -1,7 +1,7 @@
 const request = require ('supertest')
 const app = require ('../app')
 
-describe('GET /itinerary', function() {
+describe('GET /itineraries', function() {
 
 it ('Must respond with the 200 status code', function(done){
     request(app)
@@ -22,11 +22,11 @@ it ('Must respond with the 404 status code', function(done){
 
 });
 
-describe('UPDATE /itinerary', function() {
+describe('UPDATE /itineraries', function() {
 
 it('Must respond with the 201 status code', function(done) {
     request(app)
-        .patch('/itineraries/dsdsdsdsdsdsd')
+        .patch('/itineraries/63213f6f0c3bf93e0a76e8e2')
         .send({  user:[
             "656565656565"
         ]})

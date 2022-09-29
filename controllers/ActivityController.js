@@ -21,13 +21,13 @@ const activitiesController = {
             res.status("201").json({
                 message: "activity created successfully",
                 response: activity._id,
-                succes: true,
+                success: true,
             })
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "couldn't create an activity",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -39,19 +39,19 @@ const activitiesController = {
                 res.status("200").json({
                     message: "activity found",
                     response: activity,
-                    succes: true,
+                    success: true,
                 })
             } else {
                 res.status("404").json({
                     message: "activity not found",
-                    succes: false,
+                    success: false,
                 })
             }
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "error while trying to get an activity",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -68,19 +68,19 @@ const activitiesController = {
                 res.status("200").json({
                     message: "the following activities were found",
                     response: activities,
-                    succes: true,
+                    success: true,
                 })
             } else {
                 res.status("404").json({
                     message: "no activities found",
-                    succes: false,
+                    success: false,
                 })
             }
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "error while trying to get all activities",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -93,19 +93,19 @@ const activitiesController = {
                 res.status("200").json({
                     message: "activity updated successfully",
                     response: activities,
-                    succes: true,
+                    success: true,
                 })
             } else {
                 res.status("404").json({
                     message: "couldn't update, no such activity were found",
-                    succes: false,
+                    success: false,
                 })
             }
         } catch (error) {
             console.log(error)
             res.status("400").json({
                 message: "error while trying to update an activity",
-                succes: false,
+                success: false,
             })
         }
     },
@@ -116,7 +116,7 @@ const activitiesController = {
             if (activity) {
                 res.status("200").json({
                     message: "activity deleted successfully",
-                    succes: true,
+                    success: true,
                 })
             } else {
                 res.status(404).json({
@@ -128,7 +128,7 @@ const activitiesController = {
             console.log(error)
             res.status("400").json({
                 message: "error while trying to delete an activity",
-                succes: false,
+                success: false,
             })
         }
     }

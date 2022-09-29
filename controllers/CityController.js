@@ -2,27 +2,28 @@ const City = require('../models/City')
 const Joi = require('joi')
 
 const validator = Joi.object({
-  city: Joi.string().pattern(/^[a-zA-Z ]+$ /).required(),
-  country: Joi.string().pattern(/^[a-zA-Z]+$ /).required(),
-  photo: Joi.string().uri().required(),
-  population: Joi.number().integer().min(1000).max(100000000).required(),
-  founded: Joi.date().required()
+  city: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(3).max(15).required().error(new Error('City name must have between 3 and 15 characters, letters only.')),
+  country: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(4).max(15).required().error(new Error('Country name must have between 4 and 15 characters, letters only.')),
+  photo: Joi.string().uri().required().error(new Error("Invalid photo url.")),
+  population: Joi.number().integer().min(1000).max(100000000).required().error(new Error("Population must be a number between 1000 and 100M.")),
+  foundation: Joi.date().required().error(new Error("Invalid foundation year.")),
+  description: Joi.string().pattern(/^[a-zA-Zñ ]+$/).min(10).max(300).required().error(new Error('Description text must have between 10 and 300 characters, letters only.'))
 })
 
 const cityController = {
   create: async (req, res) => {
-    //const {city,country,photo,population,foundation} = req.body
+    let { city, country, photo, population, foundation, description } = req.body
     try {
-      let city = await validator.validateAsync(req.body)
-      await new City(req.body).save()
+      let result = await validator.validateAsync(req.body)
+      let city = await new City(req.body).save()
       res.status(201).json({
-        message: 'city created successfully',
+        message: 'City created successfully',
         response: city._id,
         success: true
       })
     } catch (error) {
       res.status(400).json({
-        message: "error while trying to create a city",
+        message: error.message,
         success: false
       })
     }
@@ -40,20 +41,20 @@ const cityController = {
       cities = await City.find(query)
       if (cities) {
         res.status("200").json({
-            message: "the following cities were found",
-            response: cities,
-            success: true,
-    })
-    } else {
-        res.status("404").json({
-            message: "no cities found.",
-            success: false,
+          message: "The following cities were found",
+          response: cities,
+          success: true,
         })
-    }
+      } else {
+        res.status("404").json({
+          message: "No cities found.",
+          success: false,
+        })
+      }
     } catch (error) {
       console.log(error)
       res.status(500).json({
-        message: "error while trying to read all cities",
+        message: "Error while trying to read all cities",
         success: false
       })
     }
@@ -64,20 +65,20 @@ const cityController = {
       let city = await City.findOne({ _id: id })
       if (city) {
         res.status(200).json({
-          message: "city found",
+          message: "City found",
           response: city,
           success: true
         })
       } else {
         res.status(404).json({
-          message: "city not found",
+          message: "City not found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error while trying to find a city",
+        message: "Error while trying to find a city",
         success: false
       })
     }
@@ -85,24 +86,24 @@ const cityController = {
   update: async (req, res) => {
     const { id } = req.params
     const city = req.body
-    let updatedCity
     try {
-      updatedCity = await City.findOneAndUpdate({ _id: id }, city, { new: true })
+      let result = await validator.validateAsync(req.body)
+      let updatedCity = await City.findOneAndUpdate({ _id: id }, city, { new: true })
       if (updatedCity) {
         res.status(200).json({
-          message: "city updated successfully",
+          message: "City updated successfully",
           success: true
         })
       } else {
         res.status(404).json({
-          message: "couldn't update, no such city were found",
+          message: "Couldn't update, no such city were found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error while trying to update a city",
+        message: "Error while trying to update a city",
         success: false
       })
     }
@@ -113,19 +114,19 @@ const cityController = {
       let city = await City.findOneAndRemove({ _id: id })
       if (city) {
         res.status(200).json({
-          message: "city found and deleted",
+          message: "City found and deleted",
           success: true
         })
       } else {
         res.status(404).json({
-          message: "couldn't delete, no such city were found",
+          message: "Couldn't delete, no such city were found",
           success: false
         })
       }
     } catch (error) {
       console.log(error)
       res.status(400).json({
-        message: "error while trying to delete a city",
+        message: "Error while trying to delete a city",
         success: false
       })
     }
